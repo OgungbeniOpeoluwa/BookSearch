@@ -2,6 +2,7 @@ package com.books.fastBooks.service;
 
 import com.books.fastBooks.dto.request.RegisterRequest;
 import com.books.fastBooks.dto.request.SearchForBookRequest;
+import com.books.fastBooks.dto.response.ApiResponse;
 import com.books.fastBooks.dto.response.ReadingListResponse;
 import com.books.fastBooks.dto.response.RegisterResponse;
 import com.books.fastBooks.dto.response.SearchBookResponse;
@@ -28,26 +29,27 @@ class UserServiceTest {
 
         RegisterResponse registerResponse = userService.register(registerRequest);
         assertThat(registerResponse).isNotNull();
-        assertThat(registerResponse.getId()).isEqualTo(2L);
+        assertThat(registerResponse.getId()).isEqualTo(1L);
     }
     @Test
+    @Sql(scripts = {"/scripts/insert.sql"})
     public void userSearchForBookTest() throws BookNotFound {
         SearchForBookRequest bookRequest = new SearchForBookRequest();
-        bookRequest.setUserId(2L);
+        bookRequest.setUserId(201L);
         bookRequest.setTitle("Romeo and Juliet");
 
-      SearchBookResponse searchForBookResponse = userService.search(bookRequest);
+      ApiResponse<SearchBookResponse> searchForBookResponse = userService.search(bookRequest);
 
-      assertThat(searchForBookResponse).isNotNull();
-      assertThat(searchForBookResponse.getBooks().getUser().getId()).isEqualTo(2L);
+      assertThat(searchForBookResponse.getMessage()).isNotNull();
+      assertThat(searchForBookResponse.getMessage().getBooks().getUser().getId()).isEqualTo(201L);
 
     }
     @Test
     @Sql(scripts = {"/scripts/insert.sql"})
     public void getReadingListTest() throws BookNotFound {
-        List<ReadingListResponse> response = userService.getReadingList(201L);
+       ApiResponse< List<ReadingListResponse>> response = userService.getReadingList(201L);
         assertThat(response).isNotNull();
-        assertThat(response.size()).isEqualTo(1);
+        assertThat(response.getMessage().size()).isEqualTo(1);
 
     }
 

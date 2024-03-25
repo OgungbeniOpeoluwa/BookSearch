@@ -2,6 +2,7 @@ package com.books.fastBooks.service;
 
 import com.books.fastBooks.dto.request.RegisterRequest;
 import com.books.fastBooks.dto.request.SearchForBookRequest;
+import com.books.fastBooks.dto.response.ApiResponse;
 import com.books.fastBooks.dto.response.ReadingListResponse;
 import com.books.fastBooks.dto.response.RegisterResponse;
 import com.books.fastBooks.dto.response.SearchBookResponse;
@@ -33,16 +34,17 @@ public class FastBookUserService implements UserService{
     }
 
     @Override
-    public SearchBookResponse search(SearchForBookRequest bookRequest) throws BookNotFound {
+    public ApiResponse <SearchBookResponse> search(SearchForBookRequest bookRequest) throws BookNotFound {
         Optional<User> foundUser = userRepository.findById(bookRequest.getUserId());
-       return bookService.searchForBooks(bookRequest.getTitle(),foundUser.orElseThrow());
+        SearchBookResponse searchBookResponse = bookService.searchForBooks(bookRequest.getTitle(),foundUser.orElseThrow());
+       return new ApiResponse<>(searchBookResponse);
     }
 
     @Override
-    public List<ReadingListResponse> getReadingList(long userId) throws BookNotFound {
+    public ApiResponse<List<ReadingListResponse> >getReadingList(long userId) throws BookNotFound {
         List<ReadingListResponse> readingListResponses = bookService.readingList(userId);
         System.out.println(readingListResponses);
         if(readingListResponses.isEmpty())throw new BookNotFound("No available book  in your reading list");
-        return readingListResponses;
+        return new ApiResponse<>(readingListResponses);
     }
 }

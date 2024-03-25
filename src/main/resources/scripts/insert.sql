@@ -1,6 +1,8 @@
+SET FOREIGN_KEY_CHECKS = 0;
 truncate table user;
-truncate table reading_books cascade;
+truncate table reading_books;
 truncate table persons;
+SET FOREIGN_KEY_CHECKS = 1;
 
 
 INSERT into user (id,email,password,username) values(201,"test@gmail.com","mxor123" ,"ope_mia");
