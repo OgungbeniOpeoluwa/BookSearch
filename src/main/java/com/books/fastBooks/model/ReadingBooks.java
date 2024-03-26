@@ -26,6 +26,6 @@ public class ReadingBooks {
     private List<String> bookshelves;
     @ElementCollection
     private List<String> languages;
-    @ManyToOne(cascade = {CascadeType.MERGE})
+    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private User user;
 }

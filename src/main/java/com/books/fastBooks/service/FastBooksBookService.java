@@ -20,7 +20,6 @@ import java.util.List;
 @AllArgsConstructor
 public class FastBooksBookService implements BookService{
     private ReadingBooksRepository readingBooksRepository;
-    @Autowired
     private ModelMapper mapper;
 
 
@@ -38,7 +37,7 @@ public class FastBooksBookService implements BookService{
         readingBooksRepository.save(readingBooks);
 
         SearchBookResponse bookResponse = new SearchBookResponse();
-        bookResponse.setBooks(readingBooks);
+        bookResponse.setBooks(response.getBody().getResults().getFirst());
         System.out.println(bookResponse);
 
         return bookResponse;

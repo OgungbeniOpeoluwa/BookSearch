@@ -1,5 +1,6 @@
 package com.books.fastBooks.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,6 +18,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 public class Persons {
     @Id
     @GeneratedValue(strategy = IDENTITY)
+    @JsonIgnore
     private Long id;
     private Integer birth_year;
     private Integer death_year;

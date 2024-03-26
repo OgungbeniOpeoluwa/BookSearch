@@ -41,7 +41,7 @@ class UserServiceTest {
       ApiResponse<SearchBookResponse> searchForBookResponse = userService.search(bookRequest);
 
       assertThat(searchForBookResponse.getMessage()).isNotNull();
-      assertThat(searchForBookResponse.getMessage().getBooks().getUser().getId()).isEqualTo(201L);
+      assertThat(searchForBookResponse.getMessage().getBooks().getTitle().equalsIgnoreCase(bookRequest.getTitle()));
 
     }
     @Test

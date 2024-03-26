@@ -6,9 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+
+
 @Setter
 @Getter
 @ToString
 public class SearchBookResponse {
-    private ReadingBooks books;
+    private Books books;
 }
