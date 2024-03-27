@@ -11,7 +11,7 @@ import java.util.List;
 @ToString
 public class Books {
      private String title;
-     private List<String> subjects;
+     private List<String> subject;
      private List<Persons> authors;
      private List<String> bookshelves;
      private List<String> languages;

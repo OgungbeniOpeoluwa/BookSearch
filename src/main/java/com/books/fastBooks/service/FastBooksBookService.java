@@ -9,12 +9,13 @@ import com.books.fastBooks.model.User;
 import com.books.fastBooks.repository.ReadingBooksRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -45,9 +46,11 @@ public class FastBooksBookService implements BookService{
     }
 
     @Override
-    public List<ReadingListResponse> readingList(Long id) {
-        List<ReadingListResponse> bookResponse = readingBooksRepository.findAll().stream().filter(x->x.getUser().getId() == id)
-                .map(x->new ReadingListResponse()).toList();
+    public List<ReadingListResponse> readingList(User user) {
+        System.out.println(user.getId());
+        List<ReadingListResponse> bookResponse = readingBooksRepository.findByUser(user).stream()
+                .map(ReadingListResponse::new).toList();
+        System.out.println(bookResponse);
         return bookResponse;
     }
 }

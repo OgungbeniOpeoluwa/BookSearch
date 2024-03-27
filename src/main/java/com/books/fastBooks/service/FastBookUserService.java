@@ -42,8 +42,9 @@ public class FastBookUserService implements UserService{
 
     @Override
     public ApiResponse<List<ReadingListResponse> >getReadingList(long userId) throws BookNotFound {
-        List<ReadingListResponse> readingListResponses = bookService.readingList(userId);
-        System.out.println(readingListResponses);
+        Optional<User> user = userRepository.findById(userId);
+        List<ReadingListResponse> readingListResponses = bookService.readingList(user.get());
+        System.out.println(readingListResponses.get(0));
         if(readingListResponses.isEmpty())throw new BookNotFound("No available book  in your reading list");
         return new ApiResponse<>(readingListResponses);
     }

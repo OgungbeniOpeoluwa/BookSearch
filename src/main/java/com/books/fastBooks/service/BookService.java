@@ -1,6 +1,5 @@
 package com.books.fastBooks.service;
 
-import com.books.fastBooks.dto.response.ApiResponse;
 import com.books.fastBooks.dto.response.ReadingListResponse;
 import com.books.fastBooks.dto.response.SearchBookResponse;
 import com.books.fastBooks.exception.BookNotFound;
@@ -13,5 +12,5 @@ public interface BookService {
 
     SearchBookResponse searchForBooks(String title, User user) throws BookNotFound;
 
-    List<ReadingListResponse> readingList(Long id);
+    List<ReadingListResponse> readingList(User id);
 }

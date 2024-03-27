@@ -1,9 +1,8 @@
 package com.books.fastBooks.model;
 
+import com.books.fastBooks.dto.response.ReadingListResponse;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 
@@ -20,12 +19,13 @@ public class ReadingBooks {
     private String title;
     @OneToOne(cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     private Persons authors;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> subjects;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> bookshelves;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> languages;
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private User user;
+
 }

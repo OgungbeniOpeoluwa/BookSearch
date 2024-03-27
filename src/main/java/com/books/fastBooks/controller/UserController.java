@@ -32,6 +32,7 @@ public class UserController {
     }
     @GetMapping("/readingList/{id}")
     private ResponseEntity<?> getReadingList(@PathVariable(name = "id") Long id){
+
         try{
             return  ResponseEntity.status(HttpStatus.OK).body(userService.getReadingList(id));
         }

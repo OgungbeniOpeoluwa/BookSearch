@@ -4,12 +4,14 @@ import com.books.fastBooks.dto.response.ReadingListResponse;
 import com.books.fastBooks.dto.response.SearchBookResponse;
 import com.books.fastBooks.exception.BookNotFound;
 import com.books.fastBooks.model.User;
+import com.books.fastBooks.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -18,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class BookServiceTest {
     @Autowired
     private BookService bookService;
+    @Autowired
+    private UserRepository userRepository;
 
         @Test
         public void searchForBookTest() throws BookNotFound {
@@ -43,8 +47,10 @@ class BookServiceTest {
         @Test
         @Sql(scripts = {"/scripts/insert.sql"})
     public void findBookInReadingListTest(){
-            List<ReadingListResponse> responseList = bookService.readingList(201L);
+            Optional<User> user = userRepository.findById(201L);
+            List<ReadingListResponse> responseList = bookService.readingList(user.get());
             assertThat(responseList).isNotNull();
+            assertThat(responseList.get(0).getTitle()).isEqualTo("My love life");
             assertThat(responseList).size().isEqualTo(1);
 
         }
