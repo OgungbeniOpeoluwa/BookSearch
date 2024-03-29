@@ -23,35 +23,37 @@ class BookServiceTest {
     @Autowired
     private UserRepository userRepository;
 
-        @Test
-        public void searchForBookTest() throws BookNotFound {
-            User user = new User();
-            user.setEmail("ope@gmail.com");
-            user.setPassword("opemip@1");
-            user.setUsername("ope");
-            SearchBookResponse searchBookResponse = bookService.searchForBooks("Romeo and Juliet",user);
+    @Test
+    public void searchForBookTest() throws BookNotFound {
+        User user = new User();
+        user.setEmail("ope@gmail.com");
+        user.setPassword("opemip@1");
+        user.setUsername("ope");
+        SearchBookResponse searchBookResponse = bookService.searchForBooks("Twenty years after", user);
 
-            assertThat(searchBookResponse).isNotNull();
-        }
-        @Test
-
-       public void throwExceptionIfBookDoesntExistException() throws BookNotFound {
-            User user = new User();
-            user.setEmail("ope@gmail.com");
-            user.setPassword("opemip@1");
-            user.setUsername("ope");
-
-            assertThrows(BookNotFound.class,()->bookService.searchForBooks("Half of the yellow sun", user));
-        }
-
-        @Test
-        @Sql(scripts = {"/scripts/insert.sql"})
-    public void findBookInReadingListTest(){
-            Optional<User> user = userRepository.findById(201L);
-            List<ReadingListResponse> responseList = bookService.readingList(user.get());
-            assertThat(responseList).isNotNull();
-            assertThat(responseList.get(0).getTitle()).isEqualTo("My love life");
-            assertThat(responseList).size().isEqualTo(1);
-
-        }
+        assertThat(searchBookResponse).isNotNull();
     }
+
+    @Test
+
+    public void throwExceptionIfBookDoesntExistException() throws BookNotFound {
+        User user = new User();
+        user.setEmail("ope@gmail.com");
+        user.setPassword("opemip@1");
+        user.setUsername("ope");
+
+        assertThrows(BookNotFound.class, () -> bookService.searchForBooks("Half of the yellow sun", user));
+    }
+
+    @Test
+    @Sql(scripts = {"/scripts/insert.sql"})
+    public void findBookInReadingListTest() {
+        Optional<User> user = userRepository.findById(201L);
+        List<ReadingListResponse> responseList = bookService.readingList(user.get());
+        assertThat(responseList).isNotNull();
+        assertThat(responseList.get(0).getTitle()).isEqualTo("My love life");
+        assertThat(responseList).size().isEqualTo(1);
+
+    }
+
+}

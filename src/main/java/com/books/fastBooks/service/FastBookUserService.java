@@ -7,6 +7,7 @@ import com.books.fastBooks.dto.response.ReadingListResponse;
 import com.books.fastBooks.dto.response.RegisterResponse;
 import com.books.fastBooks.dto.response.SearchBookResponse;
 import com.books.fastBooks.exception.BookNotFound;
+import com.books.fastBooks.exception.UserNotFoundException;
 import com.books.fastBooks.model.User;
 import com.books.fastBooks.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -29,7 +30,8 @@ public class FastBookUserService implements UserService{
         User user = modelMapper.map(registerRequest,User.class);
         userRepository.save(user);
         RegisterResponse response = new RegisterResponse();
-        response.setId(user.getId());
+        System.out.println(user.getId());
+        response.setUserId(user.getId());
         return response;
     }
 
@@ -41,11 +43,22 @@ public class FastBookUserService implements UserService{
     }
 
     @Override
-    public ApiResponse<List<ReadingListResponse> >getReadingList(long userId) throws BookNotFound {
-        Optional<User> user = userRepository.findById(userId);
-        List<ReadingListResponse> readingListResponses = bookService.readingList(user.get());
+    public ApiResponse<List<ReadingListResponse> >getReadingList(long userId) throws BookNotFound, UserNotFoundException {
+        User user = findUserBy(userId)
+                .orElseThrow(()->new UserNotFoundException("User with "+ userId +"doesn't exist"));
+        List<ReadingListResponse> readingListResponses = bookService.readingList(user);
         System.out.println(readingListResponses.get(0));
         if(readingListResponses.isEmpty())throw new BookNotFound("No available book  in your reading list");
         return new ApiResponse<>(readingListResponses);
     }
+
+
+
+    @Override
+    public Optional<User> findUserBy(long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        return user;
+    }
+
+
 }

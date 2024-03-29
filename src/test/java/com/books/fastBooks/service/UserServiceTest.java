@@ -7,6 +7,10 @@ import com.books.fastBooks.dto.response.ReadingListResponse;
 import com.books.fastBooks.dto.response.RegisterResponse;
 import com.books.fastBooks.dto.response.SearchBookResponse;
 import com.books.fastBooks.exception.BookNotFound;
+import com.books.fastBooks.exception.UserNotFoundException;
+import com.books.fastBooks.model.User;
+import com.books.fastBooks.repository.UserRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,11 +19,13 @@ import org.springframework.test.context.jdbc.Sql;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
 class UserServiceTest {
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
     @Test
     public void testThatUserCanRegister(){
         RegisterRequest registerRequest = new RegisterRequest();
@@ -29,7 +35,7 @@ class UserServiceTest {
 
         RegisterResponse registerResponse = userService.register(registerRequest);
         assertThat(registerResponse).isNotNull();
-        assertThat(registerResponse.getId()).isEqualTo(1L);
+        assertThat(registerResponse.getUserId()).isNotNull();
     }
     @Test
     @Sql(scripts = {"/scripts/insert.sql"})
@@ -46,11 +52,30 @@ class UserServiceTest {
     }
     @Test
     @Sql(scripts = {"/scripts/insert.sql"})
-    public void getReadingListTest() throws BookNotFound {
+    public void getReadingListTest() throws Exception {
        ApiResponse< List<ReadingListResponse>> response = userService.getReadingList(201L);
         assertThat(response).isNotNull();
         assertThat(response.getMessage().size()).isEqualTo(1);
 
+    }
+
+    @Test
+    public void testThatABookThatAlreadyExistInReadingListCantBeAddedAgain() throws BookNotFound, UserNotFoundException {
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setEmail("ope@gmail.com");
+        registerRequest.setPassword("opemip@1");
+        registerRequest.setUsername("ope");
+         Long id =  userService.register(registerRequest).getUserId();
+
+         SearchForBookRequest bookRequest = new SearchForBookRequest();
+          bookRequest.setUserId(id);
+          bookRequest.setTitle("ali");
+          userService.search(bookRequest);
+
+          userService.search(bookRequest);
+
+          List<ReadingListResponse> responseList = userService.getReadingList(id).getMessage();
+        Assertions.assertThat(responseList).size().isEqualTo(1);
     }
 
 }

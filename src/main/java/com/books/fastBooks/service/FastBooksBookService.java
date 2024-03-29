@@ -13,44 +13,63 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 @AllArgsConstructor
 public class FastBooksBookService implements BookService{
     private ReadingBooksRepository readingBooksRepository;
     private ModelMapper mapper;
+    private PersonService personService;
+    private RestTemplate restTemplate;
+    private final String imageKey = "image/jpeg";
+    private final String eBookKey = "text/html";
 
 
     @Override
     public SearchBookResponse searchForBooks(String title, User user) throws BookNotFound {
         String url = "https://gutendex.com/books?search=" + title;
-        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<FoundBooksRequest> response = restTemplate.getForEntity(url, FoundBooksRequest.class);
         if(response.getBody().getResults().isEmpty())throw new BookNotFound("Book Not Found");
 
 
-        ReadingBooks readingBooks = mapper.map(response.getBody().getResults().getFirst(),ReadingBooks.class);
-        readingBooks.setAuthors(response.getBody().getResults().getFirst().getAuthors().getFirst());
-        readingBooks.setUser(user);
-        readingBooksRepository.save(readingBooks);
-
         SearchBookResponse bookResponse = new SearchBookResponse();
         bookResponse.setBooks(response.getBody().getResults().getFirst());
-        System.out.println(bookResponse);
+
+        addBookToReadingList(user,bookResponse);
 
         return bookResponse;
 
     }
 
+    private void addBookToReadingList(User user,SearchBookResponse searchBookResponse ) {
+        if(!checkIfBookExitInReadingList(user,searchBookResponse.getBooks().getTitle())) {
+            ReadingBooks readingBooks = mapper.map(searchBookResponse.getBooks(), ReadingBooks.class);
+            personService.save(searchBookResponse.getBooks().getAuthors(), readingBooks);
+            readingBooks.setImageLink(searchBookResponse.getBooks().getFormats().get(imageKey));
+            readingBooks.setBookLink(searchBookResponse.getBooks().getFormats().get(eBookKey));
+            readingBooks.setUser(user);
+            readingBooksRepository.save(readingBooks);
+        }
+    }
+
+
     @Override
     public List<ReadingListResponse> readingList(User user) {
-        System.out.println(user.getId());
         List<ReadingListResponse> bookResponse = readingBooksRepository.findByUser(user).stream()
-                .map(ReadingListResponse::new).toList();
+                .map(x->new ReadingListResponse(x,personService.getAuthor(x))).toList();
         System.out.println(bookResponse);
         return bookResponse;
+    }
+
+    private boolean checkIfBookExitInReadingList(User user,String title){
+        List<ReadingListResponse>  userBooks = readingList(user);
+        Optional<ReadingListResponse> readingBooks = userBooks.stream()
+                .filter(x->x.getTitle().equals(title))
+                .findAny();
+        if(readingBooks.isPresent())return true;
+        return false;
     }
 }

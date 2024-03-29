@@ -26,7 +26,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(userService.search(searchForBookRequest));
         }
         catch (Exception exception){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>("Failed"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(exception.getMessage()));
         }
 
     }
@@ -37,7 +37,7 @@ public class UserController {
             return  ResponseEntity.status(HttpStatus.OK).body(userService.getReadingList(id));
         }
         catch (Exception exception){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>("Failed"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(exception.getMessage()));
         }
     }
 }

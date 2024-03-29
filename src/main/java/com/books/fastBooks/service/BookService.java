@@ -13,4 +13,5 @@ public interface BookService {
     SearchBookResponse searchForBooks(String title, User user) throws BookNotFound;
 
     List<ReadingListResponse> readingList(User id);
+
 }
