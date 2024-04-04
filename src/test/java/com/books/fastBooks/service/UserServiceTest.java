@@ -1,11 +1,9 @@
 package com.books.fastBooks.service;
 
+import com.books.fastBooks.dto.request.LoginRequest;
 import com.books.fastBooks.dto.request.RegisterRequest;
 import com.books.fastBooks.dto.request.SearchForBookRequest;
-import com.books.fastBooks.dto.response.ApiResponse;
-import com.books.fastBooks.dto.response.ReadingListResponse;
-import com.books.fastBooks.dto.response.RegisterResponse;
-import com.books.fastBooks.dto.response.SearchBookResponse;
+import com.books.fastBooks.dto.response.*;
 import com.books.fastBooks.exception.BookNotFound;
 import com.books.fastBooks.exception.UserNotFoundException;
 import com.books.fastBooks.model.User;
@@ -76,6 +74,18 @@ class UserServiceTest {
 
           List<ReadingListResponse> responseList = userService.getReadingList(id).getMessage();
         Assertions.assertThat(responseList).size().isEqualTo(1);
+    }
+
+    @Test
+    @Sql(scripts = {"/scripts/insert.sql"})
+    public void testLogin() throws UserNotFoundException {
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail("test@gmail.com");
+        loginRequest.setPassword("mxor123");
+
+        LoginResponse loginResponse = userService.login(loginRequest);
+        assertThat(loginResponse).isNotNull();
+        assertThat(loginResponse.getMessage()).isEqualTo("You have Successfully login");
     }
 
 }

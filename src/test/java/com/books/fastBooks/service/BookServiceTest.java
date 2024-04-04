@@ -41,7 +41,6 @@ class BookServiceTest {
         user.setEmail("ope@gmail.com");
         user.setPassword("opemip@1");
         user.setUsername("ope");
-
         assertThrows(BookNotFound.class, () -> bookService.searchForBooks("Half of the yellow sun", user));
     }
 

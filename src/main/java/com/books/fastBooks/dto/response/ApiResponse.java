@@ -11,5 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ApiResponse <T>{
     private  T message;
+    private boolean status;
 
 }

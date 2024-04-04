@@ -1,12 +1,10 @@
 package com.books.fastBooks.service;
 
 
+import com.books.fastBooks.dto.request.LoginRequest;
 import com.books.fastBooks.dto.request.RegisterRequest;
 import com.books.fastBooks.dto.request.SearchForBookRequest;
-import com.books.fastBooks.dto.response.ApiResponse;
-import com.books.fastBooks.dto.response.ReadingListResponse;
-import com.books.fastBooks.dto.response.RegisterResponse;
-import com.books.fastBooks.dto.response.SearchBookResponse;
+import com.books.fastBooks.dto.response.*;
 import com.books.fastBooks.exception.BookNotFound;
 import com.books.fastBooks.exception.UserNotFoundException;
 import com.books.fastBooks.model.User;
@@ -22,4 +20,6 @@ public interface UserService {
 
     ApiResponse<List<ReadingListResponse>> getReadingList(long l) throws BookNotFound, UserNotFoundException;
     Optional<User>  findUserBy(long id);
+
+    LoginResponse login(LoginRequest loginRequest) throws UserNotFoundException;
 }

@@ -1,8 +1,10 @@
 package com.books.fastBooks.controller;
 
+import com.books.fastBooks.dto.request.LoginRequest;
 import com.books.fastBooks.dto.request.RegisterRequest;
 import com.books.fastBooks.dto.request.SearchForBookRequest;
 import com.books.fastBooks.dto.response.ApiResponse;
+import com.books.fastBooks.exception.UserNotFoundException;
 import com.books.fastBooks.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +28,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(userService.search(searchForBookRequest));
         }
         catch (Exception exception){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(exception.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(exception.getMessage(),false));
         }
 
     }
@@ -37,7 +39,15 @@ public class UserController {
             return  ResponseEntity.status(HttpStatus.OK).body(userService.getReadingList(id));
         }
         catch (Exception exception){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(exception.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(exception.getMessage(),false));
+        }
+    }
+    @PostMapping("/login")
+    private ResponseEntity<?> login(@RequestBody LoginRequest loginRequest){
+        try{
+            return  ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(userService.login(loginRequest),true));
+        } catch (Exception e) {
+           return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(e.getMessage(),false));
         }
     }
 }

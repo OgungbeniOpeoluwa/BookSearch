@@ -1,12 +1,11 @@
 package com.books.fastBooks.service;
 
+import com.books.fastBooks.dto.request.LoginRequest;
 import com.books.fastBooks.dto.request.RegisterRequest;
 import com.books.fastBooks.dto.request.SearchForBookRequest;
-import com.books.fastBooks.dto.response.ApiResponse;
-import com.books.fastBooks.dto.response.ReadingListResponse;
-import com.books.fastBooks.dto.response.RegisterResponse;
-import com.books.fastBooks.dto.response.SearchBookResponse;
+import com.books.fastBooks.dto.response.*;
 import com.books.fastBooks.exception.BookNotFound;
+import com.books.fastBooks.exception.LoginException;
 import com.books.fastBooks.exception.UserNotFoundException;
 import com.books.fastBooks.model.User;
 import com.books.fastBooks.repository.UserRepository;
@@ -39,7 +38,7 @@ public class FastBookUserService implements UserService{
     public ApiResponse <SearchBookResponse> search(SearchForBookRequest bookRequest) throws BookNotFound {
         Optional<User> foundUser = userRepository.findById(bookRequest.getUserId());
         SearchBookResponse searchBookResponse = bookService.searchForBooks(bookRequest.getTitle(),foundUser.orElseThrow());
-       return new ApiResponse<>(searchBookResponse);
+       return new ApiResponse<>(searchBookResponse,true);
     }
 
     @Override
@@ -49,7 +48,7 @@ public class FastBookUserService implements UserService{
         List<ReadingListResponse> readingListResponses = bookService.readingList(user);
         System.out.println(readingListResponses.get(0));
         if(readingListResponses.isEmpty())throw new BookNotFound("No available book  in your reading list");
-        return new ApiResponse<>(readingListResponses);
+        return new ApiResponse<>(readingListResponses,true);
     }
 
 
@@ -58,6 +57,18 @@ public class FastBookUserService implements UserService{
     public Optional<User> findUserBy(long userId) {
         Optional<User> user = userRepository.findById(userId);
         return user;
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest loginRequest) throws UserNotFoundException {
+        LoginResponse loginResponse = new LoginResponse();
+        Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
+       if( user.orElseThrow(()->new UserNotFoundException("User doesn't exist"))
+               .getPassword().equals(loginRequest.getPassword())){
+           loginResponse.setMessage("You have Successfully login");
+           return loginResponse;
+       }
+        throw new LoginException("Invalid credential");
     }
 
 
